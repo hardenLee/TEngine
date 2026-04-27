@@ -1,0 +1,101 @@
+{
+  "skill_name": "tengine-dev",
+  "evals": [
+    {
+      "id": 1,
+      "name": "ui-window-lifecycle",
+      "prompt": "在 TEngine 中创建一个背包 UI（BagUI），显示物品列表，每个物品有图标和名称。点击物品弹出详情。请帮我写完整的 UIWindow 代码。",
+      "expected_patterns": [
+        "[Window(UILayer.UI",
+        "class BagUI : UIWindow",
+        "override void ScriptGenerator()",
+        "override void RegisterEvent()",
+        "override void OnCreate()",
+        "override void OnRefresh()",
+        "FindChildComponent",
+        "AddUIEvent"
+      ],
+      "forbidden_patterns": [
+        "void OnClose(",
+        "Coroutine",
+        "StartCoroutine",
+        "Resources.Load"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "event-interface-usage",
+      "prompt": "我的接口事件发送后没有任何响应，GameEvent.Get<IBattleEvent>() 返回的对象调用方法也没效果。我确认接口有 [EventInterface] 特性，实现类也注册了。可能是什么原因？",
+      "expected_patterns": [
+        "GameEventHelper.Init()",
+        "GameApp.Entrance",
+        "Source Generator",
+        "[EventInterface(EEventGroup"
+      ],
+      "forbidden_patterns": [
+        "UnRegisterAll"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "resource-lifecycle",
+      "prompt": "我需要在热更代码中加载一个配置文件（TextAsset），解析后缓存数据。窗口关闭时释放资源。请给出完整的资源加载和释放模式代码。",
+      "expected_patterns": [
+        "LoadAssetAsync<TextAsset>",
+        "UnloadAsset",
+        "OnDestroy",
+        "CancellationToken"
+      ],
+      "forbidden_patterns": [
+        "Resources.Load",
+        "StartCoroutine",
+        "LoadAssetAsync<Sprite>"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "set-sprite-callback",
+      "prompt": "我需要在 TEngine 中加载一个 Sprite 到 Image 上，加载完成后执行一些逻辑。请给出使用 SetSprite 的代码。",
+      "expected_patterns": [
+        "SetSprite",
+        "Action<Image>",
+        "callback"
+      ],
+      "forbidden_patterns": [
+        "Action<Sprite>",
+        "SetSpriteAsync",
+        "ReleaseSprite"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "module-access",
+      "prompt": "我需要使用 TEngine 的计时器模块和场景模块。请给出访问这两个模块并使用其 API 的代码示例。",
+      "expected_patterns": [
+        "GameModule.Timer",
+        "GameModule.Scene",
+        "AddTimer",
+        "LoadSceneAsync"
+      ],
+      "forbidden_patterns": [
+        "ModuleSystem.GetModule",
+        "GameModule.LoadScene"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "ui-widget-creation",
+      "prompt": "我需要在 UIWindow 中创建一个列表，每个列表项是一个 ItemWidget。请给出使用 AdjustIconNum 和 CreateWidgetByPrefab 的完整代码。",
+      "expected_patterns": [
+        "AdjustIconNum",
+        "CreateWidgetByPrefab",
+        "UIWidget",
+        "SetData"
+      ],
+      "forbidden_patterns": [
+        "new UIWidget",
+        "Instantiate"
+      ]
+    }
+  ]
+}
