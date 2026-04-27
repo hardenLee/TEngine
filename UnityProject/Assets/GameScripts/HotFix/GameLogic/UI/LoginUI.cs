@@ -25,8 +25,7 @@ namespace GameLogic
 			var myTestConfigMap = ConfigSystem.Instance.Tables.TbmyTestTable.DataMap;		
 			
 			m_imgTest.SetSprite("common_xanjian1");
-			var versiona = GameModule.Resource.InternalResourceVersion;
-			Debug.LogError(versiona);
+
 		}
 
 		#endregion
