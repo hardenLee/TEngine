@@ -32,15 +32,15 @@ public partial class GameApp
         Log.Warning("======= StartGameLogic =======");
         StartGameLogic();
     }
-    
+
     private static void StartGameLogic()
     {
-        // GameEvent.Get<ILoginUI>().ShowLoginUI();
+        //GameEvent.Get<ILoginUI>().ShowLoginUI();
         //GameModule.UI.ShowUIAsync<BattleMainUI>();
-        GameModule.UI.ShowUIAsync<LoginUI>();
-        //GameModule.UI.ShowUIAsync<TestUI>();
+        GameModule.UI.ShowUIAsync<LoginUI>(10);
+        GameModule.UI.ShowUIAsync<TestUI>();
     }
-    
+
     private static void Release()
     {
         SingletonSystem.Release();

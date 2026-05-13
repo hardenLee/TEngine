@@ -24,7 +24,7 @@ namespace TEngine
         protected internal override void OnEnter(ProcedureOwner procedureOwner)
         {
             base.OnEnter(procedureOwner);
-            Debug.LogError($"进入流程：{procedureOwner.CurrentState}");
+            Debug.Log($"进入流程：{procedureOwner.CurrentState}");
         }
 
         /// <summary>
