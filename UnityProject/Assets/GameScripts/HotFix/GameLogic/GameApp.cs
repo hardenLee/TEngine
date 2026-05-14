@@ -38,7 +38,6 @@ public partial class GameApp
         //GameEvent.Get<ILoginUI>().ShowLoginUI();
         //GameModule.UI.ShowUIAsync<BattleMainUI>();
         GameModule.UI.ShowUIAsync<LoginUI>(10);
-        GameModule.UI.ShowUIAsync<TestUI>();
     }
 
     private static void Release()
