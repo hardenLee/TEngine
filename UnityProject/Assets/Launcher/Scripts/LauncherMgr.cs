@@ -130,6 +130,22 @@ namespace Launcher
             ui?.RefreshProgress(progress);
         }
 
+        /// <summary>
+        /// 显示启动闪屏（Resources/UIWindow/SplashScreenUI）。
+        /// </summary>
+        public static void ShowSplash(string versionText = null)
+        {
+            ShowUI<SplashScreenUI>(versionText);
+        }
+
+        /// <summary>
+        /// 关闭启动闪屏。
+        /// </summary>
+        public static void CloseSplash()
+        {
+            CloseUI<SplashScreenUI>();
+        }
+
         #endregion
     }
 }

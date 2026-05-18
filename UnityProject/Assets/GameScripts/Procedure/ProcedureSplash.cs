@@ -1,4 +1,6 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using System;
+using Cysharp.Threading.Tasks;
+using Launcher;
 using TEngine;
 using UnityEngine;
 using ProcedureOwner = TEngine.IFsm<TEngine.IProcedureModule>;
@@ -20,7 +22,7 @@ namespace Procedure
         {
             base.OnEnter(procedureOwner);
             _procedureOwner = procedureOwner;
-            Log.Info("ProcedureSplash: OnEnter, start SplashManager.");
+            Log.Info("ProcedureSplash: OnEnter, show SplashScreenUI.");
             RunSplashThenInitPackage().Forget();
         }
 
@@ -28,15 +30,29 @@ namespace Procedure
         {
             try
             {
-                await SplashManager.RunAsync(SplashDurationSeconds);
+                LauncherMgr.ShowSplash(Application.version);
+
+                if (LauncherMgr.GetActiveUI<SplashScreenUI>() == null)
+                {
+                    Log.Info("ProcedureSplash: SplashScreenUI prefab not found, wait only.");
+                }
+
+                if (SplashDurationSeconds > 0f)
+                {
+                    await UniTask.Delay(TimeSpan.FromSeconds(SplashDurationSeconds));
+                }
             }
-            catch (System.OperationCanceledException)
+            catch (OperationCanceledException)
             {
                 Log.Info("ProcedureSplash: splash cancelled.");
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 Log.Error($"ProcedureSplash: splash error: {e}");
+            }
+            finally
+            {
+                LauncherMgr.CloseSplash();
             }
 
             if (_procedureOwner != null)
