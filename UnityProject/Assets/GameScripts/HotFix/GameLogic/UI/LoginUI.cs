@@ -25,7 +25,7 @@ namespace GameLogic
 			var myTestConfigMap = ConfigSystem.Instance.Tables.TbmyTestTable.DataMap;
 
 			m_imgTest.SetSprite("common_xanjian1");
-
+			GameModule.Scene.LoadSceneAsync("Test");
 		}
 
 		#endregion
