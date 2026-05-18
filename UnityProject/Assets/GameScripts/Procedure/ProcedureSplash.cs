@@ -30,14 +30,11 @@ namespace Procedure
         {
             try
             {
-                LauncherMgr.ShowSplash(Application.version);
-
-                if (LauncherMgr.GetActiveUI<SplashScreenUI>() == null)
+                if (!LauncherMgr.ShowSplash(Application.version))
                 {
-                    Log.Info("ProcedureSplash: SplashScreenUI prefab not found, wait only.");
+                    Log.Info("ProcedureSplash: SplashScreenUI prefab not found, skip splash delay.");
                 }
-
-                if (SplashDurationSeconds > 0f)
+                else if (SplashDurationSeconds > 0f)
                 {
                     await UniTask.Delay(TimeSpan.FromSeconds(SplashDurationSeconds));
                 }

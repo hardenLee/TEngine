@@ -133,9 +133,11 @@ namespace Launcher
         /// <summary>
         /// 显示启动闪屏（Resources/UIWindow/SplashScreenUI）。
         /// </summary>
-        public static void ShowSplash(string versionText = null)
+        /// <returns>闪屏是否创建成功。</returns>
+        public static bool ShowSplash(string versionText = null)
         {
             ShowUI<SplashScreenUI>(versionText);
+            return GetActiveUI<SplashScreenUI>() != null;
         }
 
         /// <summary>
