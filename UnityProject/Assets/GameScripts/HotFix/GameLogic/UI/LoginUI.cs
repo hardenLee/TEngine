@@ -33,7 +33,7 @@ namespace GameLogic
 			OnClickLoginBtnAsync().Forget();
 		}
 
-		private async Task OnClickLoginBtnAsync()
+		private async UniTaskVoid OnClickLoginBtnAsync()
 		{
 			Scene aa = await GameModule.Scene.LoadSceneAsync("Test");
 			Debug.LogError("场景真正加载完成");
