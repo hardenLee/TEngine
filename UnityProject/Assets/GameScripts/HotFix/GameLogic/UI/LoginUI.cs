@@ -21,15 +21,15 @@ namespace GameLogic
 		{
 			Item itemConfig = ConfigSystem.Instance.Tables.TbItem.Get(10001);
 			Debug.LogError($"item: {itemConfig.Name}");
-			
+
 			myTestTable myTestConfig = ConfigSystem.Instance.Tables.TbmyTestTable.Get(10002);
 			Debug.LogError($"myTestTable: {myTestConfig.Name}");
-			
+
 			var myTestConfigList = ConfigSystem.Instance.Tables.TbmyTestTable.DataList;
 			var myTestConfigMap = ConfigSystem.Instance.Tables.TbmyTestTable.DataMap;
-			
+
 			m_imgTest.SetSprite("common_xanjian1");
-			
+
 			OnClickLoginBtnAsync().Forget();
 		}
 
@@ -37,6 +37,18 @@ namespace GameLogic
 		{
 			Scene aa = await GameModule.Scene.LoadSceneAsync("Test");
 			Debug.LogError("场景真正加载完成");
+
+
+			int test = 3;
+			vip testVip = (vip)test;
+			Debug.LogError($"testVip: {testVip}");
+		}
+
+		enum vip
+		{
+			None = 0,
+			One = 1,
+			Two = 2,
 		}
 
 		#endregion
