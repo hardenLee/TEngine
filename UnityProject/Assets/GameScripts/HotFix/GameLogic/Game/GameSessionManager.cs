@@ -3,7 +3,11 @@ using System.Collections.Generic;
 
 namespace GameLogic
 {
-    /// <summary>无 Unity/UI 依赖的单局状态机，便于测试和后续接入不同操作方式。</summary>
+    /// <summary>
+    /// 无 Unity/UI 依赖的单局状态机。
+    /// 状态顺序：Idle → Presenting（等待玩家）→ Feedback（展示判定结果）→
+    /// Presenting（下一件）或 Finished（结算）。SortingDeskUI 订阅其事件来显示画面。
+    /// </summary>
     public sealed class GameSessionManager
     {
         private readonly List<AntiqueDefinition> _queue = new List<AntiqueDefinition>();
@@ -34,6 +38,7 @@ namespace GameLogic
             Level = level;
             _queue.Clear();
             _queue.AddRange(level.Antiques);
+            // 当前先随机出货；若要严格按 levelAntique.SpawnOrder 出货，可移除此 Shuffle 调用。
             Shuffle(_queue, randomSeed == 0 ? Environment.TickCount : randomSeed);
             _queueIndex = 0;
             Score = Combo = MaxCombo = CorrectCount = JudgedCount = 0;
@@ -41,11 +46,13 @@ namespace GameLogic
             RemainingSeconds = level.DurationSeconds;
             _isInputLocked = false;
             State = RoundState.Presenting;
+            // 通知 UI 展示第一件货。
             AntiquePresented?.Invoke(CurrentAntique);
         }
 
         public void Tick(float deltaSeconds)
         {
+            // 由 SortingDeskUI.OnUpdate 每帧调用；超时直接进入结算。
             if (State == RoundState.Idle || State == RoundState.Finished || deltaSeconds <= 0f) return;
             RemainingSeconds = Math.Max(0f, RemainingSeconds - deltaSeconds);
             if (RemainingSeconds <= 0f) Finish(false);
@@ -53,6 +60,7 @@ namespace GameLogic
 
         public bool SubmitVerdict(AntiqueVerdict verdict)
         {
+            // 防止反馈期间或重复点击时重复结算同一件藏品。
             if (State != RoundState.Presenting || _isInputLocked || CurrentAntique == null) return false;
             _isInputLocked = true;
             State = RoundState.Judging;
@@ -64,6 +72,7 @@ namespace GameLogic
             string line;
             if (correct)
             {
+                // 倍率读取 gameRule，不在玩法代码中写死连击档位。
                 CorrectCount++;
                 Combo++;
                 MaxCombo = Math.Max(MaxCombo, Combo);
@@ -73,6 +82,7 @@ namespace GameLogic
             }
             else
             {
+                // 信誉扣除值同样由 gameRule 控制；连击在误判后归零。
                 Combo = 0;
                 reputationDelta = -Level.Rules.WrongReputationCost;
                 Reputation = Math.Max(0, Reputation + reputationDelta);
@@ -80,6 +90,7 @@ namespace GameLogic
             }
 
             State = RoundState.Feedback;
+            // 只发送不可变结果快照，UI 无需知道具体的计分过程。
             Judged?.Invoke(new JudgmentResult(correct, scoreDelta, reputationDelta, Combo, line, CurrentAntique.CorrectVerdict));
             return true;
         }
@@ -87,6 +98,7 @@ namespace GameLogic
         /// <summary>由 UI 在反馈动画完成后调用，派发下一件货。</summary>
         public void ContinueAfterFeedback()
         {
+            // 此方法必须在 UI 的反馈动画/停留结束后调用。
             if (State != RoundState.Feedback) return;
             if (Reputation <= 0) { Finish(true); return; }
             _queueIndex++;
@@ -96,17 +108,27 @@ namespace GameLogic
             AntiquePresented?.Invoke(CurrentAntique);
         }
 
-        public SessionResult GetResult() => new SessionResult(Level?.Name ?? string.Empty, Score, CorrectCount, JudgedCount, MaxCombo, Reputation <= 0);
+        public SessionResult GetResult() => CreateResult(Reputation <= 0);
 
         private void Finish(bool reputationExhausted)
         {
             if (State == RoundState.Finished) return;
             State = RoundState.Finished;
-            Finished?.Invoke(new SessionResult(Level?.Name ?? string.Empty, Score, CorrectCount, JudgedCount, MaxCombo, reputationExhausted));
+            // 将单局状态压缩为结算快照，交由 ResultUI 展示。
+            Finished?.Invoke(CreateResult(reputationExhausted));
+        }
+
+        private SessionResult CreateResult(bool reputationExhausted)
+        {
+            // 通关条件由 level.passScore 控制；信誉归零时即使积分足够也视为失败。
+            bool isPassed = !reputationExhausted && Score >= Level.PassScore;
+            return new SessionResult(Level.Id, Level.Name, Score, CorrectCount, JudgedCount, MaxCombo,
+                reputationExhausted, isPassed, Level.UnlockLevelId);
         }
 
         private string GetFeedbackLine(BossLineTrigger trigger, string fallback)
         {
+            // 关卡专属吐槽优先于全局吐槽；两者都没有时使用 antique 表的专属文案。
             foreach (BossLineDefinition line in Level.BossLines)
             {
                 if (line.Trigger != trigger || line.MinCombo > Combo) continue;

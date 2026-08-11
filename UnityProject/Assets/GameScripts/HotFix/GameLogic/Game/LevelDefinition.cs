@@ -11,12 +11,13 @@ namespace GameLogic
         public int InitialReputation { get; }
         public int TargetScore { get; }
         public int PassScore { get; }
+        public int UnlockLevelId { get; }
         public IReadOnlyList<AntiqueDefinition> Antiques { get; }
         public GameRuleSet Rules { get; }
         public IReadOnlyList<BossLineDefinition> BossLines { get; }
 
         public LevelDefinition(int id, string name, float durationSeconds, int initialReputation, int targetScore,
-            int passScore, IReadOnlyList<AntiqueDefinition> antiques, GameRuleSet rules,
+            int passScore, int unlockLevelId, IReadOnlyList<AntiqueDefinition> antiques, GameRuleSet rules,
             IReadOnlyList<BossLineDefinition> bossLines)
         {
             Id = id;
@@ -25,6 +26,7 @@ namespace GameLogic
             InitialReputation = initialReputation;
             TargetScore = targetScore;
             PassScore = passScore;
+            UnlockLevelId = unlockLevelId;
             Antiques = antiques;
             Rules = rules;
             BossLines = bossLines;

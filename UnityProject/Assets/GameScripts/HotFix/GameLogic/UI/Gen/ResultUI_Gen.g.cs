@@ -22,6 +22,7 @@ namespace GameLogic
 		private TextMeshProUGUI m_tmpAccuracy = null!;
 		private TextMeshProUGUI m_tmpCombo = null!;
 		private Button m_btnAgain = null!;
+		private Button m_btnNextLevel = null!;
 		private Button m_btnBack = null!;
 
 		protected override void ScriptGenerator()
@@ -37,9 +38,12 @@ namespace GameLogic
 			m_tmpAccuracy = m_bindComponent.GetComponent<TextMeshProUGUI>(2);
 			m_tmpCombo = m_bindComponent.GetComponent<TextMeshProUGUI>(3);
 			m_btnAgain = m_bindComponent.GetComponent<Button>(4);
-			m_btnBack = m_bindComponent.GetComponent<Button>(5);
+			m_btnNextLevel = m_bindComponent.GetComponent<Button>(5);
+			m_btnBack = m_bindComponent.GetComponent<Button>(6);
 			m_btnAgain.onClick.RemoveAllListeners();
 			m_btnAgain.onClick.AddListener(OnClickAgainBtn);
+			m_btnNextLevel.onClick.RemoveAllListeners();
+			m_btnNextLevel.onClick.AddListener(OnClickNextLevelBtn);
 			m_btnBack.onClick.RemoveAllListeners();
 			m_btnBack.onClick.AddListener(OnClickBackBtn);
 		}
@@ -49,6 +53,8 @@ namespace GameLogic
 		#region 事件
 
 		private partial void OnClickAgainBtn();
+
+		private partial void OnClickNextLevelBtn();
 
 		private partial void OnClickBackBtn();
 
