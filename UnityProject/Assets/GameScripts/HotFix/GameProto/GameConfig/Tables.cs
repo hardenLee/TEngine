@@ -14,11 +14,21 @@ namespace GameConfig
 public partial class Tables
 {
     public item.TbItem TbItem {get; }
+    public Tbantique Tbantique {get; }
+    public TbbossLine TbbossLine {get; }
+    public TbgameRule TbgameRule {get; }
+    public Tblevel Tblevel {get; }
+    public TblevelAntique TblevelAntique {get; }
     public TbmyTestTable TbmyTestTable {get; }
 
     public Tables(System.Func<string, ByteBuf> loader)
     {
         TbItem = new item.TbItem(loader("item_tbitem"));
+        Tbantique = new Tbantique(loader("tbantique"));
+        TbbossLine = new TbbossLine(loader("tbbossline"));
+        TbgameRule = new TbgameRule(loader("tbgamerule"));
+        Tblevel = new Tblevel(loader("tblevel"));
+        TblevelAntique = new TblevelAntique(loader("tblevelantique"));
         TbmyTestTable = new TbmyTestTable(loader("tbmytesttable"));
         ResolveRef();
     }
@@ -26,6 +36,11 @@ public partial class Tables
     private void ResolveRef()
     {
         TbItem.ResolveRef(this);
+        Tbantique.ResolveRef(this);
+        TbbossLine.ResolveRef(this);
+        TbgameRule.ResolveRef(this);
+        Tblevel.ResolveRef(this);
+        TblevelAntique.ResolveRef(this);
         TbmyTestTable.ResolveRef(this);
     }
 }

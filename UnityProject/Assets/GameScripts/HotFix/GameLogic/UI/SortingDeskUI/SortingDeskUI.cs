@@ -62,7 +62,7 @@ namespace GameLogic
         private void ShowJudgment(JudgmentResult result)
         {
             string prefix = result.IsCorrect ? "鉴定正确！" : "鉴定失误！";
-            string score = result.IsCorrect ? $" +{result.ScoreDelta}" : " 信誉 -1";
+            string score = result.IsCorrect ? $" +{result.ScoreDelta}" : $" 信誉 {result.ReputationDelta}";
             m_tmpText.text = $"{prefix}{score}\n{result.FeedbackLine}";
             m_tmpText.gameObject.SetActive(true);
             ContinueAfterFeedbackAsync().Forget();
@@ -71,7 +71,7 @@ namespace GameLogic
 
         private async UniTaskVoid ContinueAfterFeedbackAsync()
         {
-            await UniTask.Delay(850, ignoreTimeScale: true);
+            await UniTask.Delay(_session.FeedbackDurationMs, ignoreTimeScale: true);
             if (!_isAlive || _session == null || _session.State != RoundState.Feedback) return;
             _session.ContinueAfterFeedback();
         }
@@ -89,7 +89,7 @@ namespace GameLogic
             m_tmpLevel.text = _session.Level.Name;
             m_tmpTimer.text = $"{Mathf.CeilToInt(_session.RemainingSeconds):00}s";
             m_tmpScore.text = $"分数 {_session.Score}";
-            m_tmpReputation.text = $"信誉 {new string('♥', _session.Reputation)}";
+            m_tmpReputation.text = $"信誉 {_session.Reputation}";
             m_tmpCombo.text = $"连击 x{_session.Combo}";
         }
 

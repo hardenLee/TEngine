@@ -20,6 +20,7 @@ namespace GameLogic
         public int MaxCombo { get; private set; }
         public int CorrectCount { get; private set; }
         public int JudgedCount { get; private set; }
+        public int FeedbackDurationMs => Level.Rules.FeedbackDurationMs;
 
         public event Action<AntiqueDefinition> AntiquePresented;
         public event Action<JudgmentResult> Judged;
@@ -66,16 +67,16 @@ namespace GameLogic
                 CorrectCount++;
                 Combo++;
                 MaxCombo = Math.Max(MaxCombo, Combo);
-                scoreDelta = CurrentAntique.BaseScore * ComboMultiplier(Combo);
+                scoreDelta = CurrentAntique.BaseScore * Level.Rules.GetComboMultiplier(Combo);
                 Score += scoreDelta;
-                line = CurrentAntique.CorrectLine;
+                line = GetFeedbackLine(BossLineTrigger.Correct, CurrentAntique.CorrectLine);
             }
             else
             {
                 Combo = 0;
-                reputationDelta = -1;
+                reputationDelta = -Level.Rules.WrongReputationCost;
                 Reputation = Math.Max(0, Reputation + reputationDelta);
-                line = CurrentAntique.WrongLine;
+                line = GetFeedbackLine(BossLineTrigger.Wrong, CurrentAntique.WrongLine);
             }
 
             State = RoundState.Feedback;
@@ -104,7 +105,20 @@ namespace GameLogic
             Finished?.Invoke(new SessionResult(Level?.Name ?? string.Empty, Score, CorrectCount, JudgedCount, MaxCombo, reputationExhausted));
         }
 
-        private static int ComboMultiplier(int combo) => combo >= 8 ? 4 : combo >= 5 ? 3 : combo >= 3 ? 2 : 1;
+        private string GetFeedbackLine(BossLineTrigger trigger, string fallback)
+        {
+            foreach (BossLineDefinition line in Level.BossLines)
+            {
+                if (line.Trigger != trigger || line.MinCombo > Combo) continue;
+                if (line.LevelId == Level.Id) return line.Line;
+            }
+            foreach (BossLineDefinition line in Level.BossLines)
+            {
+                if (line.Trigger == trigger && line.MinCombo <= Combo && line.LevelId == 0)
+                    return line.Line;
+            }
+            return fallback;
+        }
 
         private static void Shuffle(List<AntiqueDefinition> list, int seed)
         {
