@@ -15,16 +15,17 @@ namespace GameLogic
         private GameSessionManager _session;
         private bool _isAlive;
 
-        private partial void OnClickGenuineBtn() => Submit(AntiqueVerdict.Genuine);
-        private partial void OnClickFakeBtn() => Submit(AntiqueVerdict.Fake);
-        private partial void OnClickSpecialBtn() => Submit(AntiqueVerdict.Special);
+        private partial void OnClickGenuineBtn() => Submit(EAntiqueVerdict.Genuine);
+        private partial void OnClickFakeBtn() => Submit(EAntiqueVerdict.Fake);
+        private partial void OnClickSpecialBtn() => Submit(EAntiqueVerdict.Special);
 
         protected override void OnRefresh()
         {
             // UserData 由 MainMenuUI 的 ShowUIAsync<SortingDeskUI>(level) 传入。
             // 兜底读取第一关，便于在 Unity 中单独打开该窗口调试。
             var level = UserData as LevelDefinition ?? DemoAntiqueCatalog.LoadLevelOne();
-            if (_session != null) Unsubscribe(_session);
+            if (_session != null)
+                Unsubscribe(_session);
 
             // Session 不操作任何 Unity/UI 组件，只负责本局数据和状态流转。
             _session = new GameSessionManager();
@@ -41,7 +42,8 @@ namespace GameLogic
         protected override void OnUpdate()
         {
             // TEngine 每帧调用 UIWindow.OnUpdate；此处把帧时间交给 Session 扣除倒计时。
-            if (_session == null || _session.State == RoundState.Finished) return;
+            if (_session == null || _session.State == ERoundState.Finished)
+                return;
             _session.Tick(Time.unscaledDeltaTime);
             RefreshHud();
         }
@@ -49,14 +51,16 @@ namespace GameLogic
         protected override void OnDestroy()
         {
             _isAlive = false;
-            if (_session != null) Unsubscribe(_session);
+            if (_session != null)
+                Unsubscribe(_session);
             base.OnDestroy();
         }
 
-        private void Submit(AntiqueVerdict verdict)
+        private void Submit(EAntiqueVerdict verdict)
         {
             // 仅 Session 处于 Presenting 时才会受理；返回 true 代表本次点击有效。
-            if (_session != null && _session.SubmitVerdict(verdict)) SetButtonsInteractable(false);
+            if (_session != null && _session.SubmitVerdict(verdict))
+                SetButtonsInteractable(false);
         }
 
         private void PresentAntique(AntiqueDefinition antique)
@@ -85,14 +89,16 @@ namespace GameLogic
         {
             // 停留时长来自 gameRule.FeedbackDurationMs；避免把数值写死在 UI。
             await UniTask.Delay(_session.FeedbackDurationMs, ignoreTimeScale: true);
-            if (!_isAlive || _session == null || _session.State != RoundState.Feedback) return;
+            if (!_isAlive || _session == null || _session.State != ERoundState.Feedback)
+                return;
             // 反馈结束后才允许发下一件；若信誉归零或队列结束，Session 会触发 Finished。
             _session.ContinueAfterFeedback();
         }
 
         private void ShowResult(SessionResult result)
         {
-            if (!_isAlive) return;
+            if (!_isAlive)
+                return;
             // 结算数据作为 UserData 传给 ResultUI；关闭工作台会同时取消其事件订阅。
             GameModule.UI.ShowUIAsync<ResultUI>(result);
             Close();
@@ -100,7 +106,8 @@ namespace GameLogic
 
         private void RefreshHud()
         {
-            if (_session == null) return;
+            if (_session == null)
+                return;
             m_tmpLevel.text = _session.Level.Name;
             m_tmpTimer.text = $"{Mathf.CeilToInt(_session.RemainingSeconds):00}s";
             m_tmpScore.text = $"分数 {_session.Score}";

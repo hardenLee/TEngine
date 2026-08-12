@@ -71,11 +71,11 @@ namespace GameLogic
             return lines;
         }
 
-        private static AntiqueVerdict ToVerdict(int verdict)
+        private static EAntiqueVerdict ToVerdict(int verdict)
         {
-            if (verdict < (int)AntiqueVerdict.Genuine || verdict > (int)AntiqueVerdict.Special)
+            if (verdict < (int)EAntiqueVerdict.Genuine || verdict > (int)EAntiqueVerdict.Special)
                 throw new ArgumentOutOfRangeException(nameof(verdict), verdict, "antique.verdict 必须为 1、2 或 3。");
-            return (AntiqueVerdict)verdict;
+            return (EAntiqueVerdict)verdict;
         }
     }
 }

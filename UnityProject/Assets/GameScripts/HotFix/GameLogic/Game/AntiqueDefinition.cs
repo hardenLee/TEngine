@@ -9,13 +9,13 @@ namespace GameLogic
         public string Name { get; }
         public string Description { get; }
         public string ImageAddress { get; }
-        public AntiqueVerdict CorrectVerdict { get; }
+        public EAntiqueVerdict CorrectVerdict { get; }
         public string CorrectLine { get; }
         public string WrongLine { get; }
         public int BaseScore { get; }
 
         public AntiqueDefinition(int id, string name, string description, string imageAddress,
-            AntiqueVerdict correctVerdict, string correctLine, string wrongLine, int baseScore = 100)
+            EAntiqueVerdict correctVerdict, string correctLine, string wrongLine, int baseScore = 100)
         {
             Id = id;
             Name = name;

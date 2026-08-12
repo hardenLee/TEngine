@@ -8,10 +8,10 @@ namespace GameLogic
         public int ReputationDelta { get; }
         public int ComboAfter { get; }
         public string FeedbackLine { get; }
-        public AntiqueVerdict CorrectVerdict { get; }
+        public EAntiqueVerdict CorrectVerdict { get; }
 
         public JudgmentResult(bool isCorrect, int scoreDelta, int reputationDelta, int comboAfter,
-            string feedbackLine, AntiqueVerdict correctVerdict)
+            string feedbackLine, EAntiqueVerdict correctVerdict)
         {
             IsCorrect = isCorrect;
             ScoreDelta = scoreDelta;
